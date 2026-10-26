@@ -561,12 +561,6 @@ gunicorn main:app
 
 > **This project is for educational and research purposes only.** NeuroScan AI is **not** a certified medical device and does **not** provide a medical diagnosis. Predictions may be wrong. Always consult a qualified doctor or radiologist for any medical decision.
 
----
-
-## 📜 License & Author
-
-- **License:** ✏️ Add a license (e.g., MIT) by creating a `LICENSE` file.
-- **Author:** ✏️ Your Name — [GitHub](https://github.com/<your-username>) · [LinkedIn](https://linkedin.com/in/<your-profile>)
 
 ---
 
