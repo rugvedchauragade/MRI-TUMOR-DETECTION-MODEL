@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroScan AI | Brain MRI Tumor Classifier</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0f1d;
+            --surface: #121a2f;
+            --surface-2: #18223c;
+            --border: #26314f;
+            --text: #eef1f9;
+            --muted: #94a0bf;
+            --accent: #5b8cff;
+            --accent-2: #8b6bff;
+            --good: #34d399;
+            --bad: #f87171;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background:
+                radial-gradient(900px 500px at 50% -10%, rgba(91, 140, 255, 0.18), transparent 70%),
+                var(--bg);
+            background-repeat: no-repeat;
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ---------- header ---------- */
+        header.top {
+            border-bottom: 1px solid var(--border);
+            background: rgba(10, 15, 29, 0.7);
+        }
+        header.top .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 68px;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+        .logo {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        }
+        .tagline {
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        /* ---------- hero ---------- */
+        .hero {
+            text-align: center;
+            padding: 56px 0 36px;
+        }
+        .hero h1 {
+            font-size: clamp(1.9rem, 4.5vw, 2.9rem);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            margin-bottom: 14px;
+        }
+        .hero h1 span {
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hero p {
+            max-width: 560px;
+            margin: 0 auto;
+            color: var(--muted);
+            font-size: 1rem;
+        }
+
+        /* ---------- cards ---------- */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+        }
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .card-sub {
+            color: var(--muted);
+            font-size: 0.88rem;
+            margin-bottom: 20px;
+        }
+
+        /* ---------- upload ---------- */
+        .dropzone {
+            position: relative;
+            border: 2px dashed var(--border);
+            border-radius: 14px;
+            padding: 36px 20px;
+            text-align: center;
+            background: var(--surface-2);
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .dropzone:hover,
+        .dropzone.drag {
+            border-color: var(--accent);
+            background: #1b2747;
+        }
+        .dropzone input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .dz-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .dz-title {
+            font-weight: 600;
+            font-size: 0.98rem;
+            margin-bottom: 4px;
+        }
+        .dz-sub {
+            color: var(--muted);
+            font-size: 0.82rem;
+        }
+
+        /* selected file row */
+        .file-row {
+            display: none;
+            align-items: center;
+            gap: 14px;
+            margin-top: 16px;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--surface-2);
+        }
+        .file-row.show { display: flex; }
+        .file-row img {
+            width: 54px;
+            height: 54px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #000;
+            flex-shrink: 0;
+        }
+        .file-info { min-width: 0; }
+        .file-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .file-size {
+            color: var(--muted);
+            font-size: 0.78rem;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 26px rgba(91, 140, 255, 0.4);
+        }
+
+        /* ---------- results ---------- */
+        .results {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+            gap: 28px;
+            align-items: start;
+        }
+        .scan {
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+        .scan img {
+            display: block;
+            width: 100%;
+            max-height: 320px;
+            object-fit: contain;
+        }
+        .scan-label {
+            padding: 9px 12px;
+            font-size: 0.75rem;
+            color: var(--muted);
+            background: var(--surface-2);
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        .verdict {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 20px;
+        }
+        .verdict .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .theme-good .verdict { color: var(--good); }
+        .theme-good .verdict .dot { background: var(--good); }
+        .theme-bad .verdict { color: var(--bad); }
+        .theme-bad .verdict .dot { background: var(--bad); }
+
+        .conf-box {
+            padding: 16px 18px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--surface-2);
+            margin-bottom: 24px;
+        }
+        .conf-top {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .conf-top .label { margin-bottom: 0; }
+        .conf-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
+        .meter {
+            height: 8px;
+            background: #0d1428;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        .meter .fill {
+            height: 100%;
+            width: 0;
+            border-radius: 999px;
+            animation: grow 1s ease 0.2s forwards;
+        }
+        .theme-good .meter .fill { background: var(--good); }
+        .theme-bad .meter .fill { background: var(--bad); }
+        @keyframes grow { to { width: var(--w); } }
+
+        .prob {
+            display: grid;
+            grid-template-columns: 100px minmax(0, 1fr) 60px;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .prob-name {
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+        .prob-val {
+            font-size: 0.85rem;
+            color: var(--muted);
+            text-align: right;
+        }
+        .bar {
+            height: 8px;
+            background: #0d1428;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        .bar .fill {
+            height: 100%;
+            width: 0;
+            border-radius: 999px;
+            background: #4a5683;
+            animation: grow 1s ease 0.3s forwards;
+        }
+        .bar .fill.top {
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        }
+
+        .disclaimer {
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border);
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+        .disclaimer strong { color: #fbbf24; }
+
+        footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.78rem;
+            padding: 10px 24px 40px;
+        }
+
+        /* ---------- loading ---------- */
+        .loading {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 50;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            background: rgba(10, 15, 29, 0.88);
+        }
+        .loading.show { display: flex; }
+        .spinner {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 4px solid var(--border);
+            border-top-color: var(--accent);
+            animation: spin 0.9s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading p { color: var(--muted); font-size: 0.92rem; }
+
+        @media (max-width: 720px) {
+            .results { grid-template-columns: minmax(0, 1fr); }
+            .tagline { display: none; }
+            .card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Analyzing MRI scan...</p>
+    </div>
+
+    <header class="top">
+        <div class="container">
+            <div class="brand">
+                <div class="logo">🧠</div>
+                <span>NeuroScan AI</span>
+            </div>
+            <span class="tagline">VGG16 Deep Learning Diagnostic System</span>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="hero">
+            <h1>Brain MRI <span>Tumor Classifier</span></h1>
+            <p>Upload a brain MRI scan to detect glioma, meningioma, pituitary tumor, or normal tissue.</p>
+        </section>
+
+        <!-- Upload card (form attributes and input name must match main.py) -->
+        <section class="card">
+            <div class="card-title">Upload MRI Scan</div>
+            <div class="card-sub">Choose a clear sagittal or axial brain MRI image.</div>
+
+            <form action="/" method="POST" enctype="multipart/form-data" id="scanForm">
+                <div class="dropzone" id="dropzone">
+                    <input type="file" id="file" name="file" accept="image/*" required>
+                    <div class="dz-icon">📤</div>
+                    <div class="dz-title">Drag and drop your image here, or click to browse</div>
+                    <div class="dz-sub">JPG, PNG and other image formats</div>
+                </div>
+
+                <div class="file-row" id="fileRow">
+                    <img id="thumb" alt="Selected scan">
+                    <div class="file-info">
+                        <div class="file-name" id="fileName"></div>
+                        <div class="file-size" id="fileSize"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn">Run Diagnostic Scan</button>
+            </form>
+        </section>
+
+        <!-- Results card -->
+        {% if result %}
+        <section class="card {% if 'success' in badge_style %}theme-good{% else %}theme-bad{% endif %}">
+            <div class="card-title">Scan Results</div>
+            <div class="card-sub">Prediction generated by the VGG16 model.</div>
+
+            <div class="results">
+                <div>
+                    <div class="scan">
+                        <img src="{{ image_url }}" alt="Uploaded Scan">
+                        <div class="scan-label">Uploaded scan</div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="label">Diagnosis</div>
+                    <div class="verdict">
+                        <span class="dot"></span>
+                        <span>{{ result }}</span>
+                    </div>
+
+                    <div class="conf-box">
+                        <div class="conf-top">
+                            <span class="label">Confidence</span>
+                            <span class="conf-value">{{ confidence }}%</span>
+                        </div>
+                        <div class="meter"><div class="fill" style="--w: {{ confidence }}%"></div></div>
+                    </div>
+
+                    <div class="label">Class Probabilities</div>
+                    {% for class_name, prob in probabilities.items() %}
+                    <div class="prob">
+                        <span class="prob-name">{{ class_name }}</span>
+                        <div class="bar"><div class="fill {% if prob > 50 %}top{% endif %}" style="--w: {{ prob }}%"></div></div>
+                        <span class="prob-val">{{ prob }}%</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="disclaimer">
+                <strong>Not a medical diagnosis.</strong> This is an educational AI project. Please consult a qualified doctor or radiologist for any clinical decision.
+            </div>
+        </section>
+        {% endif %}
+
+    </main>
+
+    <footer>NeuroScan AI &middot; Built with Flask, TensorFlow and VGG16</footer>
+
+    <script>
+        var input = document.getElementById('file');
+        var zone = document.getElementById('dropzone');
+        var row = document.getElementById('fileRow');
+        var thumb = document.getElementById('thumb');
+        var nameEl = document.getElementById('fileName');
+        var sizeEl = document.getElementById('fileSize');
+        var form = document.getElementById('scanForm');
+        var loading = document.getElementById('loading');
+
+        function showFile(file) {
+            if (!file) return;
+            nameEl.textContent = file.name;
+            sizeEl.textContent = (file.size / 1024).toFixed(1) + ' KB';
+            var reader = new FileReader();
+            reader.onload = function (e) { thumb.src = e.target.result; };
+            reader.readAsDataURL(file);
+            row.classList.add('show');
+        }
+
+        input.addEventListener('change', function () { showFile(input.files[0]); });
+
+        ['dragenter', 'dragover'].forEach(function (ev) {
+            zone.addEventListener(ev, function () { zone.classList.add('drag'); });
+        });
+        ['dragleave', 'drop'].forEach(function (ev) {
+            zone.addEventListener(ev, function () { zone.classList.remove('drag'); });
+        });
+        zone.addEventListener('drop', function (e) {
+            if (e.dataTransfer && e.dataTransfer.files.length) {
+                input.files = e.dataTransfer.files;
+                showFile(input.files[0]);
+            }
+        });
+
+        form.addEventListener('submit', function () {
+            if (input.files.length) loading.classList.add('show');
+        });
+        window.addEventListener('pageshow', function () { loading.classList.remove('show'); });
+    </script>
+</body>
+</html>
