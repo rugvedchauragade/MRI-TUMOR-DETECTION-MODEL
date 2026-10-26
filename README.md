@@ -33,7 +33,7 @@
 14. [Limitations & Honest Notes](#-limitations--honest-notes)
 15. [Future Improvements](#-future-improvements)
 16. [Disclaimer](#-medical-disclaimer)
-17. [License & Author](#-license--author)
+    
 
 ---
 
