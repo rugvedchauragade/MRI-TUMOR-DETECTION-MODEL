@@ -274,7 +274,7 @@ This single file contains the architecture and learned weights, and is loaded di
 
 ### 1. Training Performance
 
-![VGG16 Model Training](images/MODEL_TRAINING.png)
+![VGG16 Model Training](MODEL_TRAINING.png)
 
 The training curve over 5 epochs shows:
 
@@ -287,7 +287,7 @@ This means the model learned fast (thanks to transfer learning) and the training
 
 ### 2. Confusion Matrix
 
-![Confusion Matrix](images/CONFUSION_MATRIX.png)
+![Confusion Matrix](CONFUSION_MATRIX.png)
 
 The confusion matrix compares **actual classes (rows)** with **predicted classes (columns)** on the test set of 1,600 images (400 per class).
 
@@ -321,7 +321,7 @@ The confusion matrix compares **actual classes (rows)** with **predicted classes
 
 ### 3. ROC Curves & AUC Scores
 
-![Multi-Class ROC Curves](images/Multi_Class_ROC_Curves_n_AUC_Scores.png)
+![Multi-Class ROC Curves](Multi_Class_ROC_Curves_n_AUC_Scores.png)
 
 ROC curves were plotted in a **one-vs-rest** manner (each class against all the others). The closer a curve is to the top-left corner, the better the model separates that class.
 
